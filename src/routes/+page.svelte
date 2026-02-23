@@ -22,6 +22,7 @@
 	let messageInput = '';
 	let roomList: Room[] = [];
 	let showPasswordPrompt = false;
+	let showDisclaimer = localStorage.getItem('disclaimer_seen') !== 'true';
 	let pendingRoom = '';
 	let pendingAction = '';
 	let roomUserCount = 0;
@@ -29,8 +30,8 @@
 	const ROOMS_TOKEN = 'public-chat-token';
 	// const WS_URL = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
 	// const API_URL = '';
-	const WS_URL = 'wss://temp-chat-production-45a1.up.railway.app'
-	const API_URL = 'https://temp-chat-production-45a1.up.railway.app'
+	const WS_URL = 'wss://temp-chat-production-45a1.up.railway.app';
+	const API_URL = 'https://temp-chat-production-45a1.up.railway.app';
 
 	onMount(() => {
 		if (myUsername) {
@@ -218,7 +219,11 @@
 	}
 </script>
 
-<h1>Go WebSocket Chat</h1>
+<h1>
+	TempChat <button class="disclaimer-btn" onclick={() => (showDisclaimer = true)}
+		>⚠️ Disclaimer</button
+	>
+</h1>
 
 <div id="user-info">
 	{#if myUsername}
@@ -240,7 +245,7 @@
 
 		{#if !currentRoom && !myUsername}
 			<div id="login-prompt">
-j				<button onclick={() => (showLogin = true)}>Login to save username</button>
+				j <button onclick={() => (showLogin = true)}>Login to save username</button>
 			</div>
 		{/if}
 
@@ -319,6 +324,27 @@ j				<button onclick={() => (showLogin = true)}>Login to save username</button>
 			/>
 			<button onclick={confirmJoinWithPassword}>Join</button>
 			<button onclick={() => (showPasswordPrompt = false)}>Cancel</button>
+		</div>
+	</div>
+{/if}
+
+{#if showDisclaimer}
+	<div class="modal-overlay">
+		<div class="modal disclaimer-modal">
+			<h3>⚠️ Disclaimer</h3>
+			<div class="disclaimer-content">
+				<p><strong>This is not a replacement for real chat applications.</strong></p>
+				<p>This site is intended for <strong>quick and temporary chats only</strong>.</p>
+				<hr />
+				<p class="warning"><strong>Do NOT share sensitive information here.</strong></p>
+				<p class="note">Use at your own risk.</p>
+			</div>
+			<button
+				onclick={() => {
+					localStorage.setItem('disclaimer_seen', 'true');
+					showDisclaimer = false;
+				}}>I Understand</button
+			>
 		</div>
 	</div>
 {/if}
@@ -448,5 +474,37 @@ j				<button onclick={() => (showLogin = true)}>Login to save username</button>
 	}
 	.modal button {
 		margin: 5px;
+	}
+	.disclaimer-btn {
+		font-size: 12px !important;
+		padding: 5px 10px !important;
+		background: #ff6b6b !important;
+		color: white !important;
+		border: none !important;
+		cursor: pointer;
+	}
+	.disclaimer-modal {
+		max-width: 500px;
+		max-height: 80vh;
+		overflow-y: auto;
+		text-align: left;
+	}
+	.disclaimer-content {
+		margin: 15px 0;
+	}
+	.disclaimer-content p {
+		margin: 10px 0;
+	}
+	.disclaimer-content hr {
+		margin: 15px 0;
+		border: none;
+		border-top: 1px solid #ddd;
+	}
+	.disclaimer-content .warning {
+		color: #d32f2f;
+	}
+	.disclaimer-content .note {
+		color: #666;
+		font-size: 14px;
 	}
 </style>
