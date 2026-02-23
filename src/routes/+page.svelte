@@ -237,18 +237,31 @@
 	<div class="main-content">
 		{#if showLogin && !myUsername && !currentRoom}
 			<div id="login-screen">
-				<input type="text" id="username" placeholder="Username" onkeypress={handleLoginKeypress} />
+				<input
+					type="text"
+					id="username"
+					placeholder="Username"
+					autocomplete="off"
+					onkeypress={handleLoginKeypress}
+				/>
 				<button onclick={login}>Login</button>
 				<button onclick={() => (showLogin = false)}>Cancel</button>
 			</div>
 		{/if}
 
 		<div id="room-controls">
-			<input type="text" id="room-name" placeholder="New room name" onkeypress={handleKeypress} />
+			<input
+				type="text"
+				id="room-name"
+				placeholder="New room name"
+				autocomplete="off"
+				onkeypress={handleKeypress}
+			/>
 			<input
 				type="password"
 				id="room-password"
 				placeholder="Room password (optional)"
+				autocomplete="off"
 				onkeypress={handleKeypress}
 			/>
 			<label>
@@ -276,6 +289,7 @@
 				type="text"
 				id="message"
 				placeholder="Type a message..."
+				autocomplete="off"
 				bind:value={messageInput}
 				onkeypress={handleKeypress}
 			/>
@@ -299,8 +313,18 @@
 		{/if}
 
 		<div class="private-join">
-			<input type="text" id="private-room-name" placeholder="Private room name" />
-			<input type="password" id="private-room-password" placeholder="Password (if needed)" />
+			<input
+				type="text"
+				id="private-room-name"
+				placeholder="Private room name"
+				autocomplete="off"
+			/>
+			<input
+				type="password"
+				id="private-room-password"
+				placeholder="Password (if needed)"
+				autocomplete="off"
+			/>
 			<button onclick={joinPrivateRoom}>Join Private Room</button>
 		</div>
 	</div>
@@ -314,6 +338,7 @@
 				type="password"
 				id="prompt-password"
 				placeholder="Password"
+				autocomplete="off"
 				onkeypress={handlePasswordKeypress}
 			/>
 			<button onclick={confirmJoinWithPassword}>Join</button>
