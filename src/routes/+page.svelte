@@ -220,11 +220,10 @@
 	}
 </script>
 
-<h1>
-	TempChat <button class="disclaimer-btn" onclick={() => (showDisclaimer = true)}
-		>⚠️ Disclaimer</button
-	>
-</h1>
+<div class="mt-4 flex flex-col items-center">
+	<h1 class="text-4xl">TempChat</h1>
+	<button class="disclaimer-btn" onclick={() => (showDisclaimer = true)}> ⚠️ Disclaimer </button>
+</div>
 
 <div id="user-info">
 	{#if myUsername}
@@ -236,7 +235,7 @@
 
 <div class="container">
 	<div class="main-content">
-		{#if showLogin && !myUsername}
+		{#if showLogin && !myUsername && !currentRoom}
 			<div id="login-screen">
 				<input type="text" id="username" placeholder="Username" onkeypress={handleLoginKeypress} />
 				<button onclick={login}>Login</button>
@@ -261,7 +260,7 @@
 
 		{#if currentRoom}
 			<div id="room-info">
-				Room: {currentRoom} | Users: <span id="room-count">{roomUserCount}</span>
+				Room: {currentRoom} | Users: {roomUserCount}
 				<button onclick={leaveRoom}>Leave Room</button>
 			</div>
 		{/if}
