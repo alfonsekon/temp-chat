@@ -27,8 +27,10 @@
 	let roomUserCount = 0;
 	let refreshInterval: ReturnType<typeof setInterval>;
 	const ROOMS_TOKEN = 'public-chat-token';
-	const WS_URL = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
-	const API_URL = '';
+	// const WS_URL = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
+	// const API_URL = '';
+	const WS_URL = 'wss://temp-chat-production-45a1.up.railway.app'
+	const API_URL = 'https://temp-chat-production-45a1.up.railway.app'
 
 	onMount(() => {
 		if (myUsername) {
@@ -238,7 +240,7 @@
 
 		{#if !currentRoom && !myUsername}
 			<div id="login-prompt">
-				<button onclick={() => (showLogin = true)}>Login to save username</button>
+j				<button onclick={() => (showLogin = true)}>Login to save username</button>
 			</div>
 		{/if}
 
