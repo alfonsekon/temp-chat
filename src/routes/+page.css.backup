@@ -1,0 +1,341 @@
+:global(body) {
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		Roboto,
+		sans-serif;
+	margin: 0;
+	padding: 24px;
+	background: #f8fafc;
+	min-height: 100vh;
+}
+h1 {
+	color: #1e293b;
+	font-weight: 700;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.container {
+	display: flex;
+	gap: 24px;
+	max-width: 1000px;
+	margin: 0 auto;
+}
+.main-content {
+	flex: 1;
+}
+.sidebar {
+	width: 220px;
+	background: white;
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.sidebar h3 {
+	margin: 0 0 16px 0;
+	color: #334155;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+.room-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 0;
+	border-bottom: 1px solid #e2e8f0;
+	transition: background 0.15s ease;
+	border-radius: 8px;
+	margin: 0 -8px;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+.room-item:hover {
+	background: #f1f5f9;
+}
+.room-item span {
+	font-size: 14px;
+	color: #475569;
+}
+.room-item button {
+	padding: 6px 12px;
+	font-size: 12px;
+	background: #e2e8f0;
+	border: none;
+	border-radius: 6px;
+	color: #475569;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+.room-item button:hover {
+	background: #cbd5e1;
+	transform: translateY(-1px);
+}
+.private-join {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid #e2e8f0;
+}
+.private-join input {
+	width: 100%;
+	padding: 10px 12px;
+	margin-bottom: 8px;
+	box-sizing: border-box;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	font-size: 14px;
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+.private-join input:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+#login-screen,
+#room-controls {
+	background: white;
+	padding: 20px;
+	margin-bottom: 16px;
+	border-radius: 12px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+#login-screen input,
+#room-controls input {
+	padding: 10px 14px;
+	margin-right: 8px;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	font-size: 14px;
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+#login-screen input:focus,
+#room-controls input:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+#room-controls button,
+#login-screen button,
+button {
+	padding: 10px 18px;
+	background: #3b82f6;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	transition: all 0.15s ease;
+}
+button:hover {
+	background: #2563eb;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+button:active {
+	transform: translateY(0);
+}
+#room-info {
+	background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+	padding: 14px 18px;
+	margin-bottom: 16px;
+	border-radius: 10px;
+	color: #166534;
+	font-weight: 500;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+#room-info button {
+	background: #22c55e;
+	padding: 8px 14px;
+	font-size: 13px;
+}
+#room-info button:hover {
+	background: #16a34a;
+}
+#user-info {
+	background: white;
+	padding: 14px 18px;
+	margin-bottom: 16px;
+	border-radius: 10px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	color: #475569;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+#user-info button {
+	background: #f1f5f9;
+	color: #475569;
+	padding: 8px 14px;
+	font-size: 13px;
+}
+#user-info button:hover {
+	background: #e2e8f0;
+	box-shadow: none;
+}
+#chatbox {
+	height: 400px;
+	border: 1px solid #e2e8f0;
+	overflow-y: auto;
+	padding: 16px;
+	margin-bottom: 16px;
+	background: white;
+	border-radius: 12px;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+#chatbox div {
+	margin: 8px 0;
+	padding: 8px 12px;
+	border-radius: 8px;
+	background: #f8fafc;
+}
+#chatbox div:has(+ div:not(.sys)) {
+	margin-bottom: 2px;
+}
+.sys {
+	color: #64748b;
+	font-style: italic;
+	background: transparent !important;
+	font-size: 13px;
+}
+#input-area {
+	display: flex;
+	gap: 12px;
+}
+#message {
+	flex: 1;
+	padding: 12px 16px;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	font-size: 14px;
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+#message:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+#input-area button {
+	background: #22c55e;
+}
+#input-area button:hover {
+	background: #16a34a;
+	box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(4px);
+	animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+.modal {
+	background: white;
+	padding: 28px;
+	border-radius: 16px;
+	text-align: center;
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+	animation: slideUp 0.25s ease;
+	max-width: 90%;
+}
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+.modal h3 {
+	margin: 0 0 20px 0;
+	color: #1e293b;
+	font-size: 20px;
+}
+.modal input {
+	display: block;
+	margin: 12px 0;
+	padding: 12px 16px;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 14px;
+	transition: border-color 0.15s ease;
+}
+.modal input:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.modal button {
+	margin: 8px;
+	min-width: 100px;
+}
+.disclaimer-btn {
+	font-size: 13px !important;
+	padding: 6px 12px !important;
+	background: #f97316 !important;
+	color: white !important;
+	border: none !important;
+	cursor: pointer;
+	font-weight: 500 !important;
+}
+.disclaimer-btn:hover {
+	background: #ea580c !important;
+	box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3) !important;
+}
+.disclaimer-modal {
+	max-width: 480px;
+	max-height: 85vh;
+	overflow-y: auto;
+	text-align: left;
+}
+.disclaimer-content {
+	margin: 20px 0;
+}
+.disclaimer-content p {
+	margin: 14px 0;
+	line-height: 1.6;
+	color: #334155;
+}
+.disclaimer-content hr {
+	margin: 20px 0;
+	border: none;
+	border-top: 1px solid #e2e8f0;
+}
+.disclaimer-content .warning {
+	color: #dc2626;
+	font-weight: 600;
+}
+.disclaimer-content .note {
+	color: #64748b;
+	font-size: 14px;
+}

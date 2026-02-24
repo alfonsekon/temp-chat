@@ -5,9 +5,6 @@
 	interface Message {
 		text: string;
 		isSys: boolean;
-		sender?: string;
-		timestamp: Date;
-		isMine: boolean;
 	}
 
 	interface Room {
@@ -18,7 +15,6 @@
 
 	let ws: WebSocket | null = null;
 	let currentRoom = '';
-	let chatbox: HTMLElement;
 	let myUsername: string = localStorage.getItem('chat_username') || '';
 	let guestUsername = 'Guest' + Math.floor(Math.random() * 1000);
 	let showLogin = true;
@@ -32,24 +28,11 @@
 	let pendingAction = '';
 	let roomUserCount = 0;
 	let refreshInterval: ReturnType<typeof setInterval>;
-	let isDarkMode = localStorage.getItem('theme_dark') !== 'false';
 	const ROOMS_TOKEN = 'public-chat-token';
+	// const WS_URL = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
+	// const API_URL = '';
 	const WS_URL = 'wss://temp-chat-production-45a1.up.railway.app';
 	const API_URL = 'https://temp-chat-production-45a1.up.railway.app';
-
-	function toggleTheme() {
-		isDarkMode = !isDarkMode;
-		localStorage.setItem('theme_dark', String(isDarkMode));
-	}
-
-	$: if (chatbox && messages.length) {
-		chatbox.scrollTop = chatbox.scrollHeight;
-	}
-
-	$: if (typeof document !== 'undefined') {
-		document.body.classList.toggle('light-theme', !isDarkMode);
-		document.body.classList.toggle('dark-theme', isDarkMode);
-	}
 
 	onMount(() => {
 		if (myUsername) {
@@ -115,38 +98,11 @@
 
 	function loadMessages(room: string): Message[] {
 		const stored = localStorage.getItem('chat_' + room);
-		if (!stored) return [];
-		const parsed: Message[] = JSON.parse(stored);
-		return parsed.map((m) => ({
-			...m,
-			timestamp: new Date(m.timestamp)
-		}));
-	}
-
-	function parseMessage(text: string): { sender?: string; text: string; isMine: boolean } {
-		if (text.startsWith('[')) {
-			const match = text.match(/^\[([^\]]+)\]\s*(.*)$/);
-			if (match) {
-				const sender = match[1];
-				const msgText = match[2];
-				const isMine = sender === (myUsername || guestUsername);
-				return { sender, text: msgText, isMine };
-			}
-		}
-		return { text, isMine: false };
+		return stored ? JSON.parse(stored) : [];
 	}
 
 	function addMessage(text: string, isSys: boolean) {
-		const {
-			sender,
-			text: msgText,
-			isMine
-		} = isSys ? { sender: undefined, text, isMine: false } : parseMessage(text);
-		messages = [...messages, { text: msgText, isSys, sender, timestamp: new Date(), isMine }];
-	}
-
-	function formatTime(date: Date): string {
-		return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		messages = [...messages, { text, isSys }];
 	}
 
 	function promptJoinRoom(roomName: string, hasPass: boolean) {
@@ -205,11 +161,6 @@
 		const stored = loadMessages(roomName);
 		stored.forEach((m: Message) => (messages = [...messages, m]));
 
-		setTimeout(() => {
-			const chatbox = document.getElementById('chatbox');
-			if (chatbox) chatbox.scrollTop = chatbox.scrollHeight;
-		}, 10);
-
 		ws = new WebSocket(
 			`${WS_URL}/ws?room=${encodeURIComponent(roomName)}&username=${encodeURIComponent(username)}&action=${action}&password=${encodeURIComponent(roomPassword)}&private=${isPrivate}`
 		);
@@ -228,12 +179,7 @@
 			}
 
 			const stored = loadMessages(roomName);
-			const {
-				sender,
-				text: msgText,
-				isMine
-			} = isSys ? { sender: undefined, text: e.data, isMine: false } : parseMessage(e.data);
-			stored.push({ text: msgText, isSys, sender, timestamp: new Date(), isMine });
+			stored.push({ text: e.data, isSys });
 			saveMessages(roomName, stored);
 			fetchRooms();
 		};
@@ -274,16 +220,17 @@
 	}
 </script>
 
-<div class="app-header">
-	<div class="header-left">
-		<h1>TempChat</h1>
-		<span class="header-tagline">Quick & Temporary Chat</span>
-	</div>
-	<div class="header-right">
-		<button class="theme-toggle" onclick={toggleTheme}>{isDarkMode ? '☀️ Light' : '🌙 Dark'}</button
-		>
-		<button class="disclaimer-btn" onclick={() => (showDisclaimer = true)}>⚠️ Disclaimer</button>
-	</div>
+<div class="mt-4 flex flex-col items-center">
+	<h1 class="text-4xl">TempChat</h1>
+	<button class="disclaimer-btn" onclick={() => (showDisclaimer = true)}> ⚠️ Disclaimer </button>
+</div>
+
+<div id="user-info">
+	{#if myUsername}
+		Logged in as {myUsername} <button onclick={logout}>Logout</button>
+	{:else}
+		Logged in as {guestUsername}
+	{/if}
 </div>
 
 <div class="container">
@@ -293,68 +240,47 @@
 				<input
 					type="text"
 					id="username"
-					placeholder="Enter your username"
+					placeholder="Username"
 					autocomplete="off"
 					onkeypress={handleLoginKeypress}
 				/>
 				<button onclick={login}>Login</button>
+				<button onclick={() => (showLogin = false)}>Cancel</button>
 			</div>
 		{/if}
 
-		{#if myUsername}
-			<div id="user-info">
-				<span>Logged in as <strong>{myUsername}</strong></span>
-				<button onclick={logout} class="secondary">Logout</button>
-			</div>
-		{/if}
-
-		{#if showRoomControls || !currentRoom}
-			<div id="room-controls">
-				<input
-					type="text"
-					id="room-name"
-					placeholder="Room name"
-					autocomplete="off"
-					onkeypress={handleRoomKeypress}
-				/>
-				<input
-					type="password"
-					id="room-password"
-					placeholder="Password (optional)"
-					autocomplete="off"
-					onkeypress={handleRoomKeypress}
-				/>
-				<label>
-					<input type="checkbox" id="room-private" />
-					Private
-				</label>
-				<button onclick={() => joinRoom('create')}>Create Room</button>
-			</div>
-		{/if}
+		<div id="room-controls">
+			<input
+				type="text"
+				id="room-name"
+				placeholder="New room name"
+				autocomplete="off"
+				onkeypress={handleKeypress}
+			/>
+			<input
+				type="password"
+				id="room-password"
+				placeholder="Room password (optional)"
+				autocomplete="off"
+				onkeypress={handleKeypress}
+			/>
+			<label>
+				<input type="checkbox" id="room-private" />
+				Private
+			</label>
+			<button onclick={() => joinRoom('create')}>Create Room</button>
+		</div>
 
 		{#if currentRoom}
 			<div id="room-info">
-				<span>📢 Room: <strong>{currentRoom}</strong> · 👥 {roomUserCount} users</span>
-				<button onclick={leaveRoom} class="success">Leave</button>
+				Room: {currentRoom} | Users: {roomUserCount}
+				<button onclick={leaveRoom}>Leave Room</button>
 			</div>
 		{/if}
 
-		<div id="chatbox" bind:this={chatbox}>
+		<div id="chatbox">
 			{#each messages as msg}
-				<div
-					class="message"
-					class:sys={msg.isSys}
-					class:mine={msg.isMine}
-					class:theirs={!msg.isSys && !msg.isMine}
-				>
-					{#if !msg.isSys && !msg.isMine && msg.sender}
-						<div class="message-header">
-							<span class="sender-name">{msg.sender}</span>
-							<span class="message-time">{formatTime(msg.timestamp)}</span>
-						</div>
-					{/if}
-					<div class="message-content">{msg.text}</div>
-				</div>
+				<div class:sys={msg.isSys}>{msg.text}</div>
 			{/each}
 		</div>
 
@@ -373,23 +299,18 @@
 
 	<div class="sidebar">
 		<h3>Public Rooms</h3>
-		<button class="refresh-btn" onclick={fetchRooms}>↻ Refresh</button>
-		<div class="room-list">
-			{#each roomList as room}
-				<div class="room-item">
-					<div class="room-info-left">
-						<span>{room.name}</span>
-						<span class="room-count">({room.userCount})</span>
-					</div>
-					{#if room.name !== currentRoom}
-						<button onclick={() => promptJoinRoom(room.name, room.hasPass)}>Join</button>
-					{/if}
-				</div>
-			{/each}
-			{#if roomList.length === 0}
-				<p class="no-rooms">No rooms yet. Create one!</p>
-			{/if}
-		</div>
+		<button onclick={fetchRooms}>Refresh</button>
+		{#each roomList as room}
+			<div class="room-item">
+				<span>{room.name} ({room.userCount})</span>
+				{#if room.name !== currentRoom}
+					<button onclick={() => promptJoinRoom(room.name, room.hasPass)}>Join</button>
+				{/if}
+			</div>
+		{/each}
+		{#if roomList.length === 0}
+			<p>No rooms yet</p>
+		{/if}
 
 		<div class="private-join">
 			<input
@@ -404,7 +325,7 @@
 				placeholder="Password (if needed)"
 				autocomplete="off"
 			/>
-			<button onclick={joinPrivateRoom}>Join Private</button>
+			<button onclick={joinPrivateRoom}>Join Private Room</button>
 		</div>
 	</div>
 </div>
@@ -412,7 +333,7 @@
 {#if showPasswordPrompt}
 	<div class="modal-overlay">
 		<div class="modal">
-			<h3>🔒 Enter Room Password</h3>
+			<h3>Enter Room Password</h3>
 			<input
 				type="password"
 				id="prompt-password"
@@ -420,10 +341,8 @@
 				autocomplete="off"
 				onkeypress={handlePasswordKeypress}
 			/>
-			<div class="modal-actions">
-				<button onclick={confirmJoinWithPassword}>Join</button>
-				<button onclick={() => (showPasswordPrompt = false)} class="secondary">Cancel</button>
-			</div>
+			<button onclick={confirmJoinWithPassword}>Join</button>
+			<button onclick={() => (showPasswordPrompt = false)}>Cancel</button>
 		</div>
 	</div>
 {/if}
