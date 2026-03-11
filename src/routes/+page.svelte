@@ -32,23 +32,12 @@
 	let pendingAction = '';
 	let roomUserCount = 0;
 	let refreshInterval: ReturnType<typeof setInterval>;
-	let isDarkMode = localStorage.getItem('theme_dark') !== 'false';
 	const ROOMS_TOKEN = 'public-chat-token';
 	const WS_URL = 'wss://temp-chat-production-45a1.up.railway.app';
 	const API_URL = 'https://temp-chat-production-45a1.up.railway.app';
 
-	function toggleTheme() {
-		isDarkMode = !isDarkMode;
-		localStorage.setItem('theme_dark', String(isDarkMode));
-	}
-
 	$: if (chatbox && messages.length) {
 		chatbox.scrollTop = chatbox.scrollHeight;
-	}
-
-	$: if (typeof document !== 'undefined') {
-		document.body.classList.toggle('light-theme', !isDarkMode);
-		document.body.classList.toggle('dark-theme', isDarkMode);
 	}
 
 	onMount(() => {
@@ -280,8 +269,6 @@
 		<span class="header-tagline">Quick & Temporary Chat</span>
 	</div>
 	<div class="header-right">
-		<button class="theme-toggle" onclick={toggleTheme}>{isDarkMode ? '☀️ Light' : '🌙 Dark'}</button
-		>
 		<button class="disclaimer-btn" onclick={() => (showDisclaimer = true)}>⚠️ Disclaimer</button>
 	</div>
 </div>
